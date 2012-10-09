@@ -1,0 +1,22 @@
+{% if blog.comments_enabled? == true %}
+  <section id="comments">
+    <h2>{{ article.comments_count }} {{ article.comments_count | pluralize:'Comment','Comments' }}</h2>
+
+    {% if article.comments > 0 %}
+      <ul>
+        {% for comments in article.comments %}
+          <li>
+            <article>
+              {{ comment.content }}
+              <footer>
+                {{ comment.author }}
+              </footer>
+            </article>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>There aren't any comments yet. Be the first!</p>
+    {% endif %}
+  </section>
+{% endif %}

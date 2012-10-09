@@ -1,0 +1,12 @@
+<article>
+  <header>
+    <h1>{{ article.title }}</h1>
+  </header>
+  
+  <footer>
+    <p>by <span class="author">{{ article.author }}</span> on <abbr class="pubdate" title="{{ article.published_at }}">{{ article.published_at | date: '%b %d, %Y'}}</abbr></p>
+  </footer>
+  
+  {{ article.content }}
+  {% include 'snippet-comments' %}
+</article>

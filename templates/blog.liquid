@@ -1,0 +1,22 @@
+<h1>{{ blog.title }}</h1>
+
+<ul>
+  {% for article in blog.articles %}
+    <li>
+      <article>
+        <a href="{{ article.url }}" title="{{ article.title }}">
+          <h2>{{ article.title }}</h2>
+          <p>by <span class="author">{{ article.author }}</span> on <abbr class="pubdate" title="{{ article.published_at }}">{{ article.published_at | date: '%b %d, %Y'}}</abbr></p>
+          <p class="excerpt">
+            {% if article.excerpt.size > 0 %}
+              {{ article.excerpt }}
+            {% else %}
+              {{ article.content | strip_html | truncatewords: 50 }}
+            {% endif %}
+          </p>
+          <span href="#" class="more">read more</span>
+        </a>
+      </article>
+    </li>
+  {% endfor %}
+</ul>
