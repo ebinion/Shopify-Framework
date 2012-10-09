@@ -1,0 +1,52 @@
+<article>
+  <h1>Shopping Cart</h1>
+  {% if cart.item_count == 0 %}
+    <p>Your shopping basket is empty.</p>
+  {% else %}
+    <script type="text/javascript">
+      function remove_item(id) {
+          document.getElementById('updates_'+id).value = 0;
+          document.getElementById('cartform').submit();
+      }
+    </script>
+
+    <form action="/cart" method="post" id="cartform">
+     <table>
+     <tr>
+      <th>Item Description</th>
+      <th>Price</th>
+      <th>Qty</th>
+      <th>Delete</th>
+      <th>Total</th>
+     </tr>
+
+     {% for item in cart.items %}
+      <tr>
+       <td class="images-and-description">
+       <a href="{{ item.product.url }}"><img src="{{ item.product.images.first | product_img_url: 'thumb' }}" /></a>
+       <p><a href="{{ item.product.url }}">{{ item.title }}</a></p>
+      {{ item.product.description | strip_html | truncate: 120 }}
+      </td>
+      
+      <td class="price">{{ item.price | money }}
+      </td>
+      
+      <td class="quantity"><input type="text" size="4" name="updates[{{item.variant.id}}]" id="updates_{{ item.variant.id }}" value="{{ item.quantity }}" onfocus="this.select();"/>
+      </td>
+      
+      <td class="delete"><a href="#" onclick="remove_item({{ item.variant.id }}); return false;">Remove</a>
+      </td>
+      
+      <td class="total">{{ item.line_price | money }}</td>
+      </tr>
+      {% endfor %}
+
+     </table>
+     
+      <h3>Subtotal {{ cart.total_price | money }}</h3>
+      <input type="submit" id="update-cart" name="update" value="Update" />
+      <input type="submit" name="checkout" value="Checkout" />
+    </form>
+
+  {% endif %}
+</article>
