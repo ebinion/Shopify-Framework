@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{ content_for_header }}
+    <title>{{ shop.name }} - {{ page_title }}</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <h1>{{ shop.name }}</h1>
+    {% include 'customer-links' %}
+    
+    {{ content_for_layout }}
+  </body>
+</html>

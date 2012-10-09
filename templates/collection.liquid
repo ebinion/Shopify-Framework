@@ -1,0 +1,35 @@
+<article>
+  <h1>{{ collection.title }}</h1>
+
+  {% paginate collection.products by 3 %}
+
+    <!-- Products Table -->
+    {% if collection.products.size == 0 %}
+      <p>No products found in this collection</p>
+    {% else %}
+      <table>
+        {% tablerow product in collection.products cols:3 %}
+          <figure class="product">
+            <a href="{{ product.url | within: collection }}" title="{{ product.title }}">
+              <img src="{{ product.images.first | product_img_url: 'small' }}" alt="{{ product.title }}">
+              <figcaption>
+                <h3>{{ product.title | truncate: 30 }}</h3>
+                <p class="price">{{ product.price | money }}</p>
+              </figcaption>
+            </a>
+          </figure>
+        {% endtablerow %}
+      </table>
+    {% endif %}
+    <!-- END Products Table -->
+
+    <!-- Pagination -->
+      {% if paginate.pages > 1 %}
+        <nav id="pagination">
+          {{ paginate | default_pagination }}
+        </nav>
+      {% endif %}
+    <!-- END Pagination -->
+
+  {% endpaginate %}
+</article>
