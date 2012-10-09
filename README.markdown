@@ -1,4 +1,4 @@
-# Shopify Bootstrap (WIP)
+# Shopify Framework (WIP)
 The minimium requirements for publishing a shopify theme.
 
 ## Setting up your local dev environment
