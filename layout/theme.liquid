@@ -1,129 +1,38 @@
-<!doctype html>
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
-<head>
-	
-<!-- Title -->
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="canonical" href="{{ canonical_url }}" /> 
-{% if template == 'index' %}
-<title>{{ shop.name }}</title>
-{% elsif template == '404' %}
-<title>Page Not Found | {{ shop.name }} </title>
-{% else %}
-<title>{{ page_title }} | {{ shop.name }}</title>
-{% endif %}
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9 no-js" lang="en"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+  <head>
+    {{ content_for_header }}
+    <title>
+      {% if template == 'index' %} {% if settings.fp_title.size > 0 %} {{ settings.fp_title }} {% else %} {{ shop.name }} {% endif %} {% elsif template == '404' %} {{ settings.404_title }} {% else %} {{ page_title }} &ndash; {{ shop.name }} {% endif %}
+    </title>
+    <meta charset="utf-8">
+    {% assign maxmeta = 155 %}
+    {% if template contains 'product' %}
+    <meta name="description" content="{{ product.description | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template contains 'page' %}
+    <meta name="description" content="{{ page.content | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template contains 'article' %}
+    <meta name="description" content="{{ article.content | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template == 'index' and shop.description != '' %}
+    <meta name="description" content="{{ shop.description | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% endif %}
+    
+    <link rel="canonical" href="{{ canonical_url }}" />
+  </head>
+  <body>
+    <header>
+      <h1>{{ shop.name }}</h1>
+      {% include 'customer-links' %}
+    </header>
+    
+    {{ content_for_layout }}
 
-<!-- Metadescription -->
-
-{% assign maxmeta = 155 %}
-{% if template contains 'product' %}
-<meta name="description" content="{{ product.description | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
-{% elsif template contains 'page' %}
-<meta name="description" content="{{ page.content | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
-{% elsif template == 'index' and shop.description != '' %}
-<meta name="description" content="{{ shop.description | strip_html | strip_newlines | truncate: maxmeta | escape}}" />
-{% endif %}
-
-{{ 'stylesheet.css' | asset_url | stylesheet_tag }}
-{{ 'flexslider.css' | asset_url | stylesheet_tag }}
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-
-<!--[if IE 7]>
-	{{ 'ie7.css' | asset_url | stylesheet_tag }}
-<![endif]-->
-
-{{ 'jquery.flexslider.js' | asset_url | script_tag }}
-{{ 'fancybox.js' | asset_url | script_tag }}
-{{ 'jquery.easing.1.3.js' | asset_url | script_tag }}
-{{ 'option_selection.js' | shopify_asset_url | script_tag }}
-
-{% if template contains 'customers' %}
-    {{ "shopify_common.js" | shopify_asset_url | script_tag }}
-    {{ "customer_area.js"  | shopify_asset_url | script_tag }}
-{% endif %}
-
-<script type="text/javascript">
-$(window).load(function() {
-    $('.flexslider').flexslider();
-  });
-$(document).ready(function() {
-	$("a.single_image").fancybox();
-	$("a.single_image").fancybox({ 'hideOnContentClick': true });
-	$("a.group").fancybox({ 'zoomSpeedIn': 300, 'zoomSpeedOut': 300, 'overlayShow': false }); 
-}); 
-</script>
-<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4f9dd14c2c599a14"></script>
-
-{{ content_for_header }}
-</head>
-
-<body {% if template contains 'customers' %} class="customer" {% else %} id="page-{{ template }}" {% endif %}>
-
-<div id="wrapper">
-	
-	<!-- Header -->
-    <div id="header" class="clearfix">   
-    	<div id="main_login">
-      		{% include 'customer-links' %}
-    	</div>
-      	<div id="nav-search">
-      		<form action="/search" method="get" class="search clearfix">
-				<input type="text" name="q" id="q" class="search-field" />
-				<input type="image" src="{{ 'icon-search.png' | asset_url }} " class="search-button" name="search-button" onclick="this.parentNode.submit(); return false;" id="seek" />
-			</form>
-			
-			<div id="main-menu" class="clearfix"> 
-				<ul>
-					{% for link in linklists.main-menu.links %}
-					<li{% if forloop.first %} class="first"{% elsif forloop.last %} class="last"{%endif%}>
-					{% assign child_list_handle = link.title | handleize %}
-						{% if linklists[child_list_handle].links != blank %}
-						<a href="{{ link.url }}">{{ link.title | escape }}</a>
-							<ul>
-			    				{% for childlink in linklists[child_list_handle].links %}
-								<li{% if forloop.first %} class="first"{% elsif forloop.last %} class="last"{%endif%}><a href="{{ childlink.url }}">{{ childlink.title | escape }}</a></li>
-								{% endfor %}
-							</ul> 
-								{% else %}
-								<a href="{{ link.url }}">{{ link.title | escape }}</a>
-					    {% endif %}
-					</li>
-					{% endfor %}
-					<li class="cart"><a href="/cart">Your cart ({{ cart.item_count }})</a></li>
-				</ul>
-			</div>
-      </div><!-- #nav-search -->
-       
-      <div class="logo">
-        <h1>
-          {% if settings.use_logo_image %}
-          <a href="/"><img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" /></a>
-          {% else %}
-          <a href="/">{{ shop.name }}</a>
-          {% endif %}
-        </h1>
-      </div><!-- .logo -->
-	</div><!-- #header -->
-	
-	<!-- Content -->
-    <div class="content clearfix">
-     {{ content_for_layout }}
-    </div><!-- .content -->
-
-</div><!-- #wrapper -->
-
-	<div id="footer">
-  		Copyright &copy; {{ "now" | date: "%Y" }} to {{ shop.name }} | We use {{ powered_by_link }} |
-  		<ul>
-    		{% for link in linklists.footer.links %}
-    		<li><a href="{{ link.url }}">{{ link.title }}</a></li>
-    		{% endfor %}
-  		</ul>
-  		<br />
-	</div><!-- #footer -->
-
-</body>
+    <footer>
+      
+    </footer>
+  </body>
 </html>

@@ -1,0 +1,60 @@
+{% if blog.comments_enabled? == true %}
+  {% form article %}
+    <section id="comments">
+      <h2>{{ article.comments_count }} {{ article.comments_count | pluralize:'Comment','Comments' }}</h2>
+
+      {% if article.comments_count > 0 %}
+        <ul>
+          {% for comment in article.comments %}
+            <li>
+              <article>
+                <p>On {{ comment.created_at | date: "%B %d, %Y" }}</p>
+                {{ comment.content }}
+                <footer>
+                  <img class="comment-author-picture" src="http://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=80" /> <br>
+                  {{ comment.author }}
+                </footer>
+              </article>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>There aren't any comments yet. Be the first!</p>
+      {% endif %}
+
+      <h3 id="AddCommentTitle">Add your comment</h3>
+      {% if form.errors %}
+        <div class="error notice">There was an error submitting your comment. Please correct the mistake below.</div>
+      {% endif %}
+        <ul>
+          <li>
+            <label for="name">Name</label>
+            <input type="text" id="" name="comment[author]" class="{% if form.errors contains "author" %}error{% endif %}" value="{{form.author}}">
+          </li>
+          <li>
+            <label for="email">email</label>
+            <input type="email" id="" name="comment[email]"  class="{% if form.errors contains "email" %}error{% endif %}" value="{{form.email}}">
+          </li>
+          <li>
+            <label for="body">your comment</label>
+            <textarea name="comment[body]" id="" class="{% if form.errors contains "body" %}error{% endif %}">{{form.body}}</textarea>
+          </li>
+          <li>
+            <button class="secondary">submit</button>
+          </li>
+        </ul>
+
+        {% if form.errors %}
+          <script>
+            window.location.hash = '#addCommentTitle';
+          </script>
+        {% endif %}
+        
+        {% if form.posted_successfully? %}
+          <script>
+            window.location.hash = '#comments';
+          </script>
+        {% endif %}
+    </section>
+  {% endform %}
+{% endif %}
