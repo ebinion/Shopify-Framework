@@ -1,14 +1,38 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9 no-js" lang="en"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
   <head>
     {{ content_for_header }}
-    <title>{{ shop.name }} - {{ page_title }}</title>
-    <meta charset="UTF-8">
+    <title>
+      {% if template == 'index' %} {% if settings.fp_title.size > 0 %} {{ settings.fp_title }} {% else %} {{ shop.name }} {% endif %} {% elsif template == '404' %} {{ settings.404_title }} {% else %} {{ page_title }} &ndash; {{ shop.name }} {% endif %}
+    </title>
+    <meta charset="utf-8">
+    {% assign maxmeta = 155 %}
+    {% if template contains 'product' %}
+    <meta name="description" content="{{ product.description | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template contains 'page' %}
+    <meta name="description" content="{{ page.content | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template contains 'article' %}
+    <meta name="description" content="{{ article.content | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% elsif template == 'index' and shop.description != '' %}
+    <meta name="description" content="{{ shop.description | strip_html | strip_newlines | truncate: maxmeta | escape }}" />
+    {% endif %}
+    
+    <link rel="canonical" href="{{ canonical_url }}" />
   </head>
   <body>
-    <h1>{{ shop.name }}</h1>
-    {% include 'customer-links' %}
+    <header>
+      <h1>{{ shop.name }}</h1>
+      {% include 'customer-links' %}
+    </header>
     
     {{ content_for_layout }}
+
+    <footer>
+      
+    </footer>
   </body>
 </html>
