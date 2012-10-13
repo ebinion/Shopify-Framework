@@ -1,8 +1,12 @@
-<nav>
-  <!-- Primary  navigation-->
-  <ul>
-    {% for link in linklists.main-menu.links %}
-      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-    {% endfor %}
-  </ul>
-</nav>
+{% if shop.customer_accounts_enabled %}
+  {% if customer %}
+    <p class="cart-elem" id="cart-login">Logged in as <a href="/account">{{ customer.first_name }}</a> · {{ "Logout" | customer_logout_link }}</p>
+  {% else %}
+    <p class="cart-elem" id="cart-login"> {{ 'Log in' | customer_login_link }}</p>
+  {% endif %}
+{% endif %}
+
+<p class="cart-elem" id="cart-count">
+  <a class="no-underline" href="/cart">{{ cart.item_count}} {{ cart.item_count | pluralize: 'item', 'items' }}</a> · 
+  <a href="/cart">Check out</a>
+</p>
